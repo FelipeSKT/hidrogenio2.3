@@ -4,13 +4,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeOverlay = document.getElementById('close-overlay');
     const centralButton = document.querySelector('.central-button');
     const interactiveObjectsContainer = document.getElementById('interactive-objects');
-    const infoOverlay = document.getElementById('info-overlay');
-    const infoText = document.getElementById('info-text');
-    const infoLink = document.getElementById('info-link');
-    const closeInfoOverlay = document.querySelector('.close-info-overlay');
+    const infoOverlaysContainer = document.getElementById('info-overlays');
 
     let interactiveObjects = [];
     let surroundingObjects = [];
+    let infoOverlays = [];
 
     const lightParticlesConfig = {
         particles: {
@@ -93,6 +91,38 @@ document.addEventListener('DOMContentLoaded', function() {
         return obj;
     };
 
+    const createInfoOverlay = (id, text, link) => {
+        const overlay = document.createElement('div');
+        overlay.classList.add('info-overlay');
+        overlay.id = `info-overlay-${id}`;
+
+        const content = document.createElement('div');
+        content.classList.add('info-content');
+
+        const closeButton = document.createElement('button');
+        closeButton.classList.add('close-info-overlay');
+        closeButton.innerHTML = '<i class="material-icons">close</i>';
+        closeButton.addEventListener('click', () => {
+            overlay.style.display = 'none';
+        });
+
+        const infoText = document.createElement('p');
+        infoText.textContent = text;
+
+        const infoLink = document.createElement('a');
+        infoLink.href = link;
+        infoLink.target = '_blank';
+        infoLink.textContent = 'Leia mais';
+
+        content.appendChild(closeButton);
+        content.appendChild(infoText);
+        content.appendChild(infoLink);
+        overlay.appendChild(content);
+
+        infoOverlaysContainer.appendChild(overlay);
+        infoOverlays.push(overlay);
+    };
+
     const initializeInteractiveObjects = () => {
         const centralPosition = getCentralPosition();
         const surroundingPositions = [
@@ -129,8 +159,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const x = centralPosition.x + pos.distance * Math.cos(angleInRadians) - 25; /* Ajuste para centralizar */
             const y = centralPosition.y + pos.distance * Math.sin(angleInRadians) - 25; /* Ajuste para centralizar */
             const obj = createInteractiveObject(index + 1, srcs[index + 1], x, y);
-            obj.dataset.infoText = infoTexts[index];
-            obj.dataset.infoLink = infoLinks[index];
+            createInfoOverlay(index + 1, infoTexts[index], infoLinks[index]);
             surroundingObjects.push(obj);
         });
     };
@@ -150,9 +179,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const showInfoOverlay = (id, event) => {
         const obj = surroundingObjects[id - 1];
-        if (obj) {
-            infoText.textContent = obj.dataset.infoText;
-            infoLink.href = obj.dataset.infoLink;
+        const infoOverlay = document.getElementById(`info-overlay-${id}`);
+        if (obj && infoOverlay) {
             const rect = obj.getBoundingClientRect();
             infoOverlay.style.left = `${rect.right + window.scrollX}px`; /* Ajustar a posição ao lado do objeto */
             infoOverlay.style.top = `${rect.top + window.scrollY}px`;
@@ -205,6 +233,9 @@ document.addEventListener('DOMContentLoaded', function() {
         modoNoturnoIcon.src = isNightMode ? 'icone_sol.png' : 'icone_lua.png';
         loadParticlesConfig(isNightMode);
         loadMainParticlesConfig(isNightMode);
+        document.querySelectorAll('.info-overlay').forEach(overlay => {
+            overlay.classList.toggle('modo-noturno', isNightMode);
+        });
     });
 
     centralButton.addEventListener('click', function() {
@@ -254,10 +285,6 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     window.addEventListener('resize', updateObjectPositions);
-
-    closeInfoOverlay.addEventListener('click', () => {
-        infoOverlay.style.display = 'none';
-    });
 
     initializeInteractiveObjects();
     loadMainParticlesConfig(document.body.classList.contains('modo-noturno'));

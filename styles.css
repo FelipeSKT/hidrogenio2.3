@@ -192,7 +192,7 @@ body.modo-noturno .close-overlay {
     object-fit: contain; /* Ajusta a imagem para se ajustar ao container */
 }
 
-/* Estilização para a janela de informações */
+/* Estilização para as janelas de informações */
 .info-overlay {
     display: none;
     position: absolute;
@@ -206,6 +206,11 @@ body.modo-noturno .close-overlay {
     box-sizing: border-box;
     opacity: 0; /* Inicialmente oculto */
     transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+}
+
+body.modo-noturno .info-overlay {
+    background-color: #1C201D;
+    color: white;
 }
 
 .info-content {
