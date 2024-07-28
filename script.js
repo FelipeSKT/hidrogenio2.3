@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     const modoNoturnoIcon = document.getElementById('modo-noturno');
     const overlay = document.getElementById('overlay');
     const closeOverlay = document.getElementById('close-overlay');
@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let interactiveObjects = [];
     let surroundingObjects = [];
     let infoOverlays = [];
+    let vortexActive = false; // Flag to track the state of the vortex animation
 
     const lightParticlesConfig = {
         particles: {
@@ -42,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
             opacity: { value: 1, random: true },
             size: { value: 15, random: true },
             line_linked: { enable: false, color: '#ffffff' },
-            move: { enable: true, speed: 1.5, direction: 'bottom' }
+            move: { enable: true, speed: 1.5, direction: 'bottom' },
         }
     };
 
@@ -178,6 +179,11 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     const showInfoOverlay = (id, event) => {
+        // Fechar qualquer sobreposição aberta antes de abrir a nova
+        infoOverlays.forEach(overlay => {
+            overlay.style.display = 'none';
+        });
+
         const obj = surroundingObjects[id - 1];
         const infoOverlay = document.getElementById(`info-overlay-${id}`);
         if (obj && infoOverlay) {
@@ -197,32 +203,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 
-    const showInteractiveObjects = () => {
-        anime({
-            targets: surroundingObjects,
-            opacity: 1,
-            translateX: (el, i) => {
-                const angleInRadians = (i * 45) * (Math.PI / 180);
-                return 75 * Math.cos(angleInRadians); /* Distância ajustada para manter os objetos próximos */
-            },
-            translateY: (el, i) => {
-                const angleInRadians = (i * 45) * (Math.PI / 180);
-                return 75 * Math.sin(angleInRadians); /* Distância ajustada para manter os objetos próximos */
-            },
-            scale: 1,
-            easing: 'easeOutExpo',
-            duration: 1000,
-            delay: anime.stagger(100, { start: 500 })
-        });
-
-        const centralObject = interactiveObjects[0];
-        anime({
-            targets: centralObject,
-            opacity: 1,
-            scale: 1,
-            easing: 'easeOutExpo',
-            duration: 1000
-        });
+    const toggleVortexAnimation = () => {
+        if (vortexActive) {
+            // Recolher os objetos circundantes de volta para o centro
+            anime({
+                targets: surroundingObjects,
+                opacity: 0,
+                translateX: 0,
+                translateY: 0,
+                scale: 0,
+                easing: 'easeInExpo',
+                duration: 1000,
+                delay: anime.stagger(100, { start: 500 })
+            });
+        } else {
+            // Espalhar os objetos circundantes
+            anime({
+                targets: surroundingObjects,
+                opacity: 1,
+                translateX: (el, i) => {
+                    const angleInRadians = (i * 45) * (Math.PI / 180);
+                    return 75 * Math.cos(angleInRadians); /* Distância ajustada para manter os objetos próximos */
+                },
+                translateY: (el, i) => {
+                    const angleInRadians = (i * 45) * (Math.PI / 180);
+                    return 75 * Math.sin(angleInRadians); /* Distância ajustada para manter os objetos próximos */
+                },
+                scale: 1,
+                easing: 'easeOutExpo',
+                duration: 1000,
+                delay: anime.stagger(100, { start: 500 })
+            });
+        }
+        vortexActive = !vortexActive; // Alternar o estado da animação de vórtice
     };
 
     overlay.style.display = 'none';
@@ -253,19 +266,31 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         centralObject.addEventListener('click', function() {
-            showInteractiveObjects();
+            toggleVortexAnimation();
         });
     });
 
     closeOverlay.addEventListener('click', function() {
         overlay.style.display = 'none';
         document.body.style.overflow = '';
+        // Resetar a animação de vórtice e ocultar os objetos circundantes
+        vortexActive = false;
+        surroundingObjects.forEach(obj => {
+            obj.style.opacity = '0';
+            obj.style.transform = 'translateX(0) translateY(0) scale(0)';
+        });
     });
 
     overlay.addEventListener('click', function(event) {
         if (event.target === overlay) {
             overlay.style.display = 'none';
             document.body.style.overflow = '';
+            // Resetar a animação de vórtice e ocultar os objetos circundantes
+            vortexActive = false;
+            surroundingObjects.forEach(obj => {
+                obj.style.opacity = '0';
+                obj.style.transform = 'translateX(0) translateY(0) scale(0)';
+            });
         }
     });
 

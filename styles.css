@@ -1,6 +1,12 @@
-/* Estilização global para o corpo da página */
+
+html {
+    font-family: "JetBrains Mono", monospace;
+    font-optical-sizing: auto;
+    font-weight: weight;
+    font-style: normal;
+}
+
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
     background-color: rgba(255, 255, 255, 0.9);
@@ -10,18 +16,23 @@ body {
     position: relative;
 }
 
-/* Estilização para o cabeçalho */
+
 header {
-    background-color: green;
+    background-color: #479B05;
     padding: 20px;
     position: fixed;
-    width: 100%;
+    width: 65%; 
     top: 0;
     z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: space-between;
     box-sizing: border-box;
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+    margin: 0 auto; 
+    left: 0; 
+    right: 0; 
 }
 
 header h1 {
@@ -70,13 +81,18 @@ main {
 }
 
 footer {
-    background-color: green;
-    padding: 30px;
+    background-color: #479B05;
+    padding: 20px;
     text-align: center;
     position: relative;
     bottom: 0;
     width: 100%;
+    display: flex;
+    box-sizing: border-box;
     transition: bottom 500ms ease-in-out;
+    border-top-left-radius: 50px; 
+    border-top-right-radius: 50px; 
+    
 }
 
 .extra-info {
@@ -84,6 +100,7 @@ footer {
     padding: 15px;
     margin-top: 20px;
     display: inline-block;
+    border: 50px;
 }
 
 body.modo-noturno {
@@ -92,11 +109,11 @@ body.modo-noturno {
 }
 
 body.modo-noturno header {
-    background-color: #00290A;
+    background-color: #428350;
 }
 
 body.modo-noturno footer {
-    background-color: #00290A;
+    background-color: #428350;
 }
 
 body.modo-noturno .extra-info {
@@ -104,7 +121,6 @@ body.modo-noturno .extra-info {
     color: white;
 }
 
-/* Estilização para o overlay */
 .overlay {
     display: none;
     position: fixed;
@@ -130,7 +146,7 @@ body.modo-noturno .extra-info {
     border: none;
     font-size: 30px;
     cursor: pointer;
-    z-index: 1001; /* Certificar que o botão está no topo */
+    z-index: 1001; 
 }
 
 .close-overlay:hover {
@@ -145,7 +161,6 @@ body.modo-noturno .close-overlay {
     color: white;
 }
 
-/* Estilização para os efeitos de partículas */
 #particles-js,
 #particles-main {
     position: absolute;
@@ -167,11 +182,11 @@ body.modo-noturno .close-overlay {
 
 .interactive-object {
     position: absolute;
-    width: 50px; /* Tamanho reduzido pela metade */
-    height: 50px; /* Tamanho reduzido pela metade */
+    width: 50px; 
+    height: 50px; 
     opacity: 0;
     transform: scale(0);
-    cursor: pointer; /* Certificar que o cursor é pointer */
+    cursor: pointer; 
 }
 
 .interactive-object.visible {
@@ -181,18 +196,18 @@ body.modo-noturno .close-overlay {
 
 .central-object {
     position: absolute;
-    width: 50px; /* Tamanho reduzido pela metade */
-    height: 50px; /* Tamanho reduzido pela metade */
+    width: 50px; 
+    height: 50px; 
     cursor: pointer;
 }
 
 .interactive-object img {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Ajusta a imagem para se ajustar ao container */
+    object-fit: contain;
 }
 
-/* Estilização para as janelas de informações */
+
 .info-overlay {
     display: none;
     position: absolute;
@@ -200,11 +215,12 @@ body.modo-noturno .close-overlay {
     height: 100px;
     background-color: white;
     border: 1px solid #ccc;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+    border-radius: 10px; 
     z-index: 1002;
     padding: 10px;
     box-sizing: border-box;
-    opacity: 0; /* Inicialmente oculto */
+    opacity: 0; 
     transition: transform 0.5s ease-out, opacity 0.5s ease-out;
 }
 
