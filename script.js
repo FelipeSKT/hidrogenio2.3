@@ -4,6 +4,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const closeOverlay = document.getElementById('close-overlay');
     const centralButton = document.querySelector('.central-button');
     const interactiveObjectsContainer = document.getElementById('interactive-objects');
+    const infoOverlay = document.getElementById('info-overlay');
+    const infoText = document.getElementById('info-text');
+    const infoLink = document.getElementById('info-link');
+    const closeInfoOverlay = document.querySelector('.close-info-overlay');
+
     let interactiveObjects = [];
     let surroundingObjects = [];
 
@@ -81,6 +86,10 @@ document.addEventListener('DOMContentLoaded', function() {
         obj.appendChild(img);
         interactiveObjectsContainer.appendChild(obj);
 
+        obj.addEventListener('click', (event) => {
+            showInfoOverlay(id, event);
+        });
+
         return obj;
     };
 
@@ -101,6 +110,16 @@ document.addEventListener('DOMContentLoaded', function() {
             'botao/agua.png', 'botao/carro.png', 'botao/company.png', 
             'botao/economia.png', 'botao/industrial.png', 'botao/sol.png'
         ];
+        const infoTexts = [
+            'Informações sobre usina...', 'Informações sobre atomic...', 'Informações sobre árvore...',
+            'Informações sobre água...', 'Informações sobre carro...', 'Informações sobre empresa...',
+            'Informações sobre economia...', 'Informações sobre industrial...', 'Informações sobre sol...'
+        ];
+        const infoLinks = [
+            'https://example.com/usina', 'https://example.com/atomic', 'https://example.com/arvore',
+            'https://example.com/agua', 'https://example.com/carro', 'https://example.com/company',
+            'https://example.com/economia', 'https://example.com/industrial', 'https://example.com/sol'
+        ];
 
         const centralObject = createInteractiveObject(0, srcs[0], centralPosition.x, centralPosition.y, true);
         interactiveObjects.push(centralObject);
@@ -110,6 +129,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const x = centralPosition.x + pos.distance * Math.cos(angleInRadians) - 25; /* Ajuste para centralizar */
             const y = centralPosition.y + pos.distance * Math.sin(angleInRadians) - 25; /* Ajuste para centralizar */
             const obj = createInteractiveObject(index + 1, srcs[index + 1], x, y);
+            obj.dataset.infoText = infoTexts[index];
+            obj.dataset.infoLink = infoLinks[index];
             surroundingObjects.push(obj);
         });
     };
@@ -125,6 +146,27 @@ document.addEventListener('DOMContentLoaded', function() {
             obj.style.left = `${centralPosition.x + 75 * Math.cos(angleInRadians) - 25}px`; /* Ajuste para centralizar */
             obj.style.top = `${centralPosition.y + 75 * Math.sin(angleInRadians) - 25}px`; /* Ajuste para centralizar */
         });
+    };
+
+    const showInfoOverlay = (id, event) => {
+        const obj = surroundingObjects[id - 1];
+        if (obj) {
+            infoText.textContent = obj.dataset.infoText;
+            infoLink.href = obj.dataset.infoLink;
+            const rect = obj.getBoundingClientRect();
+            infoOverlay.style.left = `${rect.right + window.scrollX}px`; /* Ajustar a posição ao lado do objeto */
+            infoOverlay.style.top = `${rect.top + window.scrollY}px`;
+            infoOverlay.style.display = 'block';
+
+            infoOverlay.style.transform = 'scale(0.5)';
+            infoOverlay.style.opacity = '0';
+
+            requestAnimationFrame(() => {
+                infoOverlay.style.transition = 'transform 0.5s ease-out, opacity 0.5s ease-out';
+                infoOverlay.style.transform = 'scale(1)';
+                infoOverlay.style.opacity = '1';
+            });
+        }
     };
 
     const showInteractiveObjects = () => {
@@ -212,6 +254,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     window.addEventListener('resize', updateObjectPositions);
+
+    closeInfoOverlay.addEventListener('click', () => {
+        infoOverlay.style.display = 'none';
+    });
 
     initializeInteractiveObjects();
     loadMainParticlesConfig(document.body.classList.contains('modo-noturno'));

@@ -191,3 +191,39 @@ body.modo-noturno .close-overlay {
     height: 100%;
     object-fit: contain; /* Ajusta a imagem para se ajustar ao container */
 }
+
+/* Estilização para a janela de informações */
+.info-overlay {
+    display: none;
+    position: absolute;
+    width: 200px;
+    height: 100px;
+    background-color: white;
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1002;
+    padding: 10px;
+    box-sizing: border-box;
+    opacity: 0; /* Inicialmente oculto */
+    transition: transform 0.5s ease-out, opacity 0.5s ease-out;
+}
+
+.info-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.close-info-overlay {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.close-info-overlay:hover {
+    background-color: lightgray;
+}
