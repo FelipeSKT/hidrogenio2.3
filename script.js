@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let interactiveObjects = [];
     let surroundingObjects = [];
     let infoOverlays = [];
-    let vortexActive = false; // Flag to track the state of the vortex animation
+    let vortexActive = false;
 
     const lightParticlesConfig = {
         particles: {
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
             opacity: { value: 1, random: true },
             size: { value: 15, random: true },
             line_linked: { enable: false, color: '#ffffff' },
-            move: { enable: true, speed: 1.5, direction: 'bottom' },
+            move: { enable: true, speed: 1.5, direction: 'bottom' }
         }
     };
 
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const initializeInteractiveObjects = () => {
         const centralPosition = getCentralPosition();
         const surroundingPositions = [
-            { angle: 45, distance: 75 }, /* Distância ajustada para manter os objetos próximos após a redução */
+            { angle: 45, distance: 75 },
             { angle: 90, distance: 75 },
             { angle: 135, distance: 75 },
             { angle: 180, distance: 75 },
@@ -157,8 +157,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         surroundingPositions.forEach((pos, index) => {
             const angleInRadians = pos.angle * (Math.PI / 180);
-            const x = centralPosition.x + pos.distance * Math.cos(angleInRadians) - 25; /* Ajuste para centralizar */
-            const y = centralPosition.y + pos.distance * Math.sin(angleInRadians) - 25; /* Ajuste para centralizar */
+            const x = centralPosition.x + pos.distance * Math.cos(angleInRadians) - 25;
+            const y = centralPosition.y + pos.distance * Math.sin(angleInRadians) - 25;
             const obj = createInteractiveObject(index + 1, srcs[index + 1], x, y);
             createInfoOverlay(index + 1, infoTexts[index], infoLinks[index]);
             surroundingObjects.push(obj);
@@ -168,18 +168,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateObjectPositions = () => {
         const centralPosition = getCentralPosition();
         const centralObject = interactiveObjects[0];
-        centralObject.style.left = `${centralPosition.x - 25}px`; /* Ajuste para centralizar */
-        centralObject.style.top = `${centralPosition.y - 25}px`; /* Ajuste para centralizar */
+        centralObject.style.left = `${centralPosition.x - 25}px`;
+        centralObject.style.top = `${centralPosition.y - 25}px`;
 
         surroundingObjects.forEach((obj, index) => {
             const angleInRadians = (index * 45) * (Math.PI / 180);
-            obj.style.left = `${centralPosition.x + 75 * Math.cos(angleInRadians) - 25}px`; /* Ajuste para centralizar */
-            obj.style.top = `${centralPosition.y + 75 * Math.sin(angleInRadians) - 25}px`; /* Ajuste para centralizar */
+            obj.style.left = `${centralPosition.x + 75 * Math.cos(angleInRadians) - 25}px`;
+            obj.style.top = `${centralPosition.y + 75 * Math.sin(angleInRadians) - 25}px`;
         });
     };
 
     const showInfoOverlay = (id, event) => {
-        // Fechar qualquer sobreposição aberta antes de abrir a nova
         infoOverlays.forEach(overlay => {
             overlay.style.display = 'none';
         });
@@ -188,7 +187,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const infoOverlay = document.getElementById(`info-overlay-${id}`);
         if (obj && infoOverlay) {
             const rect = obj.getBoundingClientRect();
-            infoOverlay.style.left = `${rect.right + window.scrollX}px`; /* Ajustar a posição ao lado do objeto */
+            infoOverlay.style.left = `${rect.right + window.scrollX}px`;
             infoOverlay.style.top = `${rect.top + window.scrollY}px`;
             infoOverlay.style.display = 'block';
 
@@ -205,7 +204,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const toggleVortexAnimation = () => {
         if (vortexActive) {
-            // Recolher os objetos circundantes de volta para o centro
             anime({
                 targets: surroundingObjects,
                 opacity: 0,
@@ -217,17 +215,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 delay: anime.stagger(100, { start: 500 })
             });
         } else {
-            // Espalhar os objetos circundantes
             anime({
                 targets: surroundingObjects,
                 opacity: 1,
                 translateX: (el, i) => {
                     const angleInRadians = (i * 45) * (Math.PI / 180);
-                    return 75 * Math.cos(angleInRadians); /* Distância ajustada para manter os objetos próximos */
+                    return 75 * Math.cos(angleInRadians);
                 },
                 translateY: (el, i) => {
                     const angleInRadians = (i * 45) * (Math.PI / 180);
-                    return 75 * Math.sin(angleInRadians); /* Distância ajustada para manter os objetos próximos */
+                    return 75 * Math.sin(angleInRadians);
                 },
                 scale: 1,
                 easing: 'easeOutExpo',
@@ -235,27 +232,72 @@ document.addEventListener('DOMContentLoaded', () => {
                 delay: anime.stagger(100, { start: 500 })
             });
         }
-        vortexActive = !vortexActive; // Alternar o estado da animação de vórtice
+        vortexActive = !vortexActive;
     };
+
+    const resetOverlayElements = () => {
+        vortexActive = false;
+        surroundingObjects.forEach(obj => {
+            obj.style.opacity = '0';
+            obj.style.transform = 'translateX(0) translateY(0) scale(0)';
+        });
+    };
+
+    const resetOverlay = () => {
+        overlay.style.display = 'none';
+        document.body.style.overflow = '';
+        interactiveObjectsContainer.innerHTML = '';
+        infoOverlaysContainer.innerHTML = '';
+        interactiveObjects = [];
+        surroundingObjects = [];
+        infoOverlays = [];
+        initializeInteractiveObjects();
+        updateObjectPositions();
+        resetOverlayElements();
+    };
+
+    closeOverlay.addEventListener('click', function() {
+        resetOverlay();
+    });
+
+    overlay.addEventListener('click', function(event) {
+        if (event.target === overlay) {
+            resetOverlay();
+        }
+    });
 
     overlay.style.display = 'none';
 
+    const resetSite = () => {
+        interactiveObjectsContainer.innerHTML = '';
+        infoOverlaysContainer.innerHTML = '';
+        interactiveObjects = [];
+        surroundingObjects = [];
+        infoOverlays = [];
+        initializeInteractiveObjects();
+        updateObjectPositions();
+    };
+
     modoNoturnoIcon.addEventListener('click', function() {
-        document.body.classList.toggle('modo-noturno');
-        const isNightMode = document.body.classList.contains('modo-noturno');
+        const isNightMode = document.body.classList.toggle('modo-noturno');
         modoNoturnoIcon.src = isNightMode ? 'icone_sol.png' : 'icone_lua.png';
         loadParticlesConfig(isNightMode);
         loadMainParticlesConfig(isNightMode);
         document.querySelectorAll('.info-overlay').forEach(overlay => {
             overlay.classList.toggle('modo-noturno', isNightMode);
         });
+        resetSite();
+        if (isNightMode) {
+            document.body.classList.add('modo-noturno');
+        } else {
+            document.body.classList.remove('modo-noturno');
+        }
     });
 
     centralButton.addEventListener('click', function() {
         overlay.style.display = 'flex';
         document.body.style.overflow = 'hidden';
         loadParticlesConfig(document.body.classList.contains('modo-noturno'));
-        // Mostrar objeto central
         const centralObject = interactiveObjects[0];
         anime({
             targets: centralObject,
@@ -273,7 +315,6 @@ document.addEventListener('DOMContentLoaded', () => {
     closeOverlay.addEventListener('click', function() {
         overlay.style.display = 'none';
         document.body.style.overflow = '';
-        // Resetar a animação de vórtice e ocultar os objetos circundantes
         vortexActive = false;
         surroundingObjects.forEach(obj => {
             obj.style.opacity = '0';
@@ -285,7 +326,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.target === overlay) {
             overlay.style.display = 'none';
             document.body.style.overflow = '';
-            // Resetar a animação de vórtice e ocultar os objetos circundantes
             vortexActive = false;
             surroundingObjects.forEach(obj => {
                 obj.style.opacity = '0';
@@ -313,7 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     initializeInteractiveObjects();
     loadMainParticlesConfig(document.body.classList.contains('modo-noturno'));
-    updateObjectPositions(); // Atualizar posições ao inicializar
+    updateObjectPositions();
 });
 
 const getCentralPosition = () => {
