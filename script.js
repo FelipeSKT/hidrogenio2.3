@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             shape: { type: 'circle' },
             opacity: { value: 1, random: true },
             size: { value: 1.5 },
-            line_linked: { enable: false, color: '#000000' },
+            line_linked: { enable: true, color: '#000000' },
             move: { enable: true, speed: 0.6 }
         }
     };
@@ -30,8 +30,29 @@ document.addEventListener('DOMContentLoaded', () => {
             shape: { type: 'circle' },
             opacity: { value: 1, random: true },
             size: { value: 1.5 },
-            line_linked: { enable: false, color: '#ffffff' },
+            line_linked: { enable: true, color: '#ffffff' },
             move: { enable: true, speed: 0.6 }
+        },
+        interactivity: {
+            events: {
+                onhover: {
+                    enable: true,
+                    mode: 'grab'
+                },
+                onclick: {
+                    enable: false,
+                    mode: 'push'
+                }
+            },
+            modes: {
+                repulse: {
+                    distance: 100,
+                    duration: 0.4
+                },
+                push: {
+                    particles_nb: 4
+                }
+            }
         }
     };
 
@@ -127,29 +148,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const initializeInteractiveObjects = () => {
         const centralPosition = getCentralPosition();
         const surroundingPositions = [
-            { angle: 45, distance: 75 },
-            { angle: 90, distance: 75 },
-            { angle: 135, distance: 75 },
-            { angle: 180, distance: 75 },
-            { angle: 225, distance: 75 },
-            { angle: 270, distance: 75 },
-            { angle: 315, distance: 75 },
-            { angle: 360, distance: 75 },
+            { angle: 45, distance: 90 },
+            { angle: 90, distance: 90 },
+            { angle: 135, distance: 90 },
+            { angle: 180, distance: 90 },
+            { angle: 225, distance: 90 },
+            { angle: 270, distance: 90 },
+            { angle: 315, distance: 90 },
+            { angle: 360, distance: 90 },
         ];
         const srcs = [
-            'botao/usina.png', 'botao/atomic.png', 'botao/arvore.png', 
-            'botao/agua.png', 'botao/carro.png', 'botao/company.png', 
-            'botao/economia.png', 'botao/industrial.png', 'botao/sol.png'
+            'botao/atomic.png',
+            'botao/usina.png',
+            'botao/arvore.png',
+            'botao/agua.png',
+            'botao/carro.png',
+            'botao/company.png',
+            'botao/economia.png',
+            'botao/industrial.png',
+            'botao/sol.png'
         ];
         const infoTexts = [
-            'Informações sobre usina...', 'Informações sobre atomic...', 'Informações sobre árvore...',
-            'Informações sobre água...', 'Informações sobre carro...', 'Informações sobre empresa...',
-            'Informações sobre economia...', 'Informações sobre industrial...', 'Informações sobre sol...'
+            'Hidrogenio Verde',
+            'Impacto Ambiental',
+            'Extração do Hidrogenio',
+            'Veiculo a Hidrogenio',
+            'Empresas no Setor',
+            'Impactos Economicos',
+            'Produção Industrial',
+            'Geração de Energia',
+            'Informações sobre sol...'
         ];
         const infoLinks = [
-            'https://example.com/usina', 'https://example.com/atomic', 'https://example.com/arvore',
-            'https://example.com/agua', 'https://example.com/carro', 'https://example.com/company',
-            'https://example.com/economia', 'https://example.com/industrial', 'https://example.com/sol'
+            'https://www.iberdrola.com/sustentabilidade/hidrogenio-verde',
+            'https://www.complexodopecem.com.br/estudo-de-impacto-ambiental-do-hub-de-hidrogenio-verde-no-pecem-e-apresentado-em-audiencia-publica/',
+            'https://propeq.com/hidrogenio-verde-producao/',
+            'https://petrosolgas.com.br/estudantes-brasileiros-criam-carro-movido-a-partir-da-celula-de-hidrogenio-e-o-resultado-e-surreal/',
+            'https://press.siemens.com/global/en/pressrelease/siemens-commissions-one-germanys-largest-green-hydrogen-generation-plants',
+            'https://br.boell.org/sites/default/files/2021-05/Relatorio_Hidrogenio_Verde_Boll_FINAL.pdf',
+            'https://revistapesquisa.fapesp.br/na-rota-do-hidrogenio-sustentavel/',
+            'https://braziljournal.com/eua-avancam-na-fusao-nuclear-abrindo-caminho-para-energia-limpa-e-infinita/',
+            'https://example.com/sol'
         ];
 
         const centralObject = createInteractiveObject(0, srcs[0], centralPosition.x, centralPosition.y, true);
@@ -173,8 +212,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         surroundingObjects.forEach((obj, index) => {
             const angleInRadians = (index * 45) * (Math.PI / 180);
-            obj.style.left = `${centralPosition.x + 75 * Math.cos(angleInRadians) - 25}px`;
-            obj.style.top = `${centralPosition.y + 75 * Math.sin(angleInRadians) - 25}px`;
+            obj.style.left = `${centralPosition.x + 0 * Math.cos(angleInRadians) - 25}px`;
+            obj.style.top = `${centralPosition.y + 0 * Math.sin(angleInRadians) - 25}px`;
         });
     };
 
@@ -203,34 +242,47 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const toggleVortexAnimation = () => {
-        if (vortexActive) {
-            anime({
-                targets: surroundingObjects,
-                opacity: 0,
-                translateX: 0,
-                translateY: 0,
-                scale: 0,
-                easing: 'easeInExpo',
-                duration: 1000,
-                delay: anime.stagger(100, { start: 500 })
-            });
-        } else {
+        if (window.innerWidth <= 768) {
             anime({
                 targets: surroundingObjects,
                 opacity: 1,
-                translateX: (el, i) => {
-                    const angleInRadians = (i * 45) * (Math.PI / 180);
-                    return 75 * Math.cos(angleInRadians);
-                },
-                translateY: (el, i) => {
-                    const angleInRadians = (i * 45) * (Math.PI / 180);
-                    return 75 * Math.sin(angleInRadians);
-                },
+                translateX: 0,
+                translateY: (el, i) => (i + 1) * 60, // Espaçamento vertical de 60px
                 scale: 1,
                 easing: 'easeOutExpo',
-                duration: 1000,
-                delay: anime.stagger(100, { start: 500 })
+                duration: 500,
+                delay: anime.stagger(100) // Intervalo entre as animações
             });
+        } else {
+            if (vortexActive) {
+                anime({
+                    targets: surroundingObjects,
+                    opacity: 0,
+                    translateX: 0,
+                    translateY: 0,
+                    scale: 0,
+                    easing: 'easeInExpo',
+                    duration: 1000,
+                    delay: anime.stagger(100, { start: 300 })
+                });
+            } else {
+                anime({
+                    targets: surroundingObjects,
+                    opacity: 1,
+                    translateX: (el, i) => {
+                        const angleInRadians = (i * 45) * (Math.PI / 180);
+                        return 150 * Math.cos(angleInRadians);
+                    },
+                    translateY: (el, i) => {
+                        const angleInRadians = (i * 45) * (Math.PI / 180);
+                        return 150 * Math.sin(angleInRadians);
+                    },
+                    scale: 1,
+                    easing: 'easeOutExpo',
+                    duration: 1000,
+                    delay: anime.stagger(100, { start: 300 })
+                });
+            }
         }
         vortexActive = !vortexActive;
     };
@@ -359,5 +411,5 @@ document.addEventListener('DOMContentLoaded', () => {
 const getCentralPosition = () => {
     const centerX = window.innerWidth / 2;
     const centerY = window.innerHeight / 2;
-    return { x: centerX, y: centerY };
+    return { x: centerX, y: centerY };  
 };
