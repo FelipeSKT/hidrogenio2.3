@@ -196,6 +196,10 @@ body.modo-noturno .close-overlay {
     cursor: pointer;
 }
 
+.central-object.mobile {
+    top: 20px; /* Ajuste conforme necessário para o espaçamento superior */
+}
+
 .interactive-object img {
     width: 100%;
     height: 100%;
@@ -205,7 +209,7 @@ body.modo-noturno .close-overlay {
 .info-overlay {
     display: none;
     position: absolute;
-    width: 200px;
+    width: 300px;
     height: 100px;
     background-color: white;
     border: 1px solid #ccc;
@@ -266,15 +270,13 @@ body.modo-noturno .info-overlay {
     }
     
     header h1 {
-        font-size: 1.2em;
+        font-size: 0.8em;
         text-align: center;
         margin: 10px 0;
     }
 
     header img#modo-noturno {
-        position: relative;
-        left: 0;
-        margin-bottom: 10px;
+        display: none;
     }
 
     main {
@@ -296,6 +298,11 @@ body.modo-noturno .info-overlay {
         margin-top: 10px;
         font-size: 0.9em;
     }
+
+    .overlay {
+        position: absolute; /* Certifica-se de que não está fixo */
+        overflow-y: auto;   /* Permite rolar o conteúdo */
+    }
 }
 
 @media (max-width: 768px) {
@@ -316,8 +323,8 @@ body.modo-noturno .info-overlay {
     }
 
     .info-overlay {
-        width: 150px;
-        height: 80px;
+        width: 90%; /* Ajusta o tamanho do overlay em dispositivos móveis */
+        left: 5%; 
     }
 
     .close-info-overlay {

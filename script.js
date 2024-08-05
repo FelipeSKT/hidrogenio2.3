@@ -243,18 +243,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const toggleVortexAnimation = () => {
         if (window.innerWidth <= 768) {
-            anime({
-                targets: surroundingObjects,
-                opacity: 1,
-                translateX: 0,
-                translateY: (el, i) => (i + 1) * 60, // Espaçamento vertical de 60px
-                scale: 1,
-                easing: 'easeOutExpo',
-                duration: 500,
-                delay: anime.stagger(100) // Intervalo entre as animações
-            });
+            if (vortexActive) {
+                // Recolher os objetos ao estado original
+                anime({
+                    targets: surroundingObjects,
+                    opacity: 0,
+                    translateX: 0,
+                    translateY: 0,
+                    scale: 0,
+                    easing: 'easeInExpo',
+                    duration: 500,
+                    delay: anime.stagger(100) // Intervalo entre as animações
+                });
+            } else {
+                // Expandir os objetos
+                anime({
+                    targets: surroundingObjects,
+                    opacity: 1,
+                    translateX: 0,
+                    translateY: (el, i) => (i + 1) * 60, // Espaçamento vertical de 60px
+                    scale: 1,
+                    easing: 'easeOutExpo',
+                    duration: 500,
+                    delay: anime.stagger(100) // Intervalo entre as animações
+                });
+            }
         } else {
             if (vortexActive) {
+                // Recolher os objetos ao estado original
                 anime({
                     targets: surroundingObjects,
                     opacity: 0,
@@ -266,6 +282,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     delay: anime.stagger(100, { start: 300 })
                 });
             } else {
+                // Expandir os objetos
                 anime({
                     targets: surroundingObjects,
                     opacity: 1,
@@ -286,6 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         vortexActive = !vortexActive;
     };
+    
 
     const resetOverlayElements = () => {
         vortexActive = false;
@@ -409,7 +427,28 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const getCentralPosition = () => {
+    const isMobile = window.innerWidth <= 768;
     const centerX = window.innerWidth / 2;
-    const centerY = window.innerHeight / 2;
-    return { x: centerX, y: centerY };  
+    const centerY = isMobile ? 100 : window.innerHeight / 2; // Ajuste a altura desejada para o objeto central na versão mobile
+    return { x: centerX, y: centerY };
+};
+
+const initializeInteractiveObjects = () => {
+    const centralPosition = getCentralPosition();
+    const isMobile = window.innerWidth <= 768;
+
+    const centralObject = createInteractiveObject(0, srcs[0], centralPosition.x, centralPosition.y, true);
+    if (isMobile) {
+        centralObject.classList.add('mobile');
+    }
+    interactiveObjects.push(centralObject);
+
+    surroundingPositions.forEach((pos, index) => {
+        const angleInRadians = pos.angle * (Math.PI / 180);
+        const x = centralPosition.x + pos.distance * Math.cos(angleInRadians) - 25;
+        const y = centralPosition.y + pos.distance * Math.sin(angleInRadians) - 25;
+        const obj = createInteractiveObject(index + 1, srcs[index + 1], x, y);
+        createInfoOverlay(index + 1, infoTexts[index], infoLinks[index]);
+        surroundingObjects.push(obj);
+    });
 };
