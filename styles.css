@@ -91,11 +91,12 @@ footer {
 }
 
 .extra-info {
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 15px;
-    margin-top: 20px;
-    display: inline-block;
-    border: 50px;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 10px;
+    color: white;
+    font-size: 110%;
 }
 
 body.modo-noturno {
@@ -112,7 +113,6 @@ body.modo-noturno footer {
 }
 
 body.modo-noturno .extra-info {
-    background-color: #1C201D;
     color: white;
 }
 
